@@ -72,10 +72,14 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 
 	// Initialize libusb. On error, halt initialization.
 	int res = libusb_init(&usb_context);
+
 	exports.Set("INIT_ERROR", Napi::Number::New(env, res));
 	if (res != 0) {
 		return exports;
 	}
+
+	//only for Windows
+	libusb_set_option(usb_context, LIBUSB_OPTION_USE_USBDK);
 
 	#ifdef USE_POLL
 	assert(libusb_pollfds_handle_timeouts(usb_context));
